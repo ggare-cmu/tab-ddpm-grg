@@ -423,11 +423,12 @@ class ResNet(nn.Module):
 #### For diffusion 
 
 class MLPDiffusion(nn.Module):
-    def __init__(self, d_in, num_classes, is_y_cond, rtdl_params, dim_t = 128):
+    def __init__(self, d_in, num_classes, is_y_cond, y_size, rtdl_params, dim_t = 128):
         super().__init__()
         self.dim_t = dim_t
         self.num_classes = num_classes
         self.is_y_cond = is_y_cond
+        self.y_size = y_size
 
         # d0 = rtdl_params['d_layers'][0]
 
@@ -436,10 +437,19 @@ class MLPDiffusion(nn.Module):
 
         self.mlp = MLP.make_baseline(**rtdl_params)
 
-        if self.num_classes > 0 and is_y_cond:
-            self.label_emb = nn.Embedding(self.num_classes, dim_t)
-        elif self.num_classes == 0 and is_y_cond:
-            self.label_emb = nn.Linear(1, dim_t)
+        # if self.num_classes > 0 and is_y_cond:
+        #     self.label_emb = nn.Embedding(self.num_classes, dim_t)
+        # elif self.num_classes == 0 and is_y_cond:
+        #     self.label_emb = nn.Linear(1, dim_t)
+
+        if is_y_cond:
+            # self.label_emb = nn.Linear(self.y_size, dim_t)
+            self.label_emb = nn.Sequential(
+                nn.Linear(self.y_size, dim_t),
+                nn.SiLU(),
+                nn.Linear(dim_t, dim_t)
+            )
+
         
         self.proj = nn.Linear(d_in, dim_t)
         self.time_embed = nn.Sequential(
@@ -451,11 +461,12 @@ class MLPDiffusion(nn.Module):
     def forward(self, x, timesteps, y=None):
         emb = self.time_embed(timestep_embedding(timesteps, self.dim_t))
         if self.is_y_cond and y is not None:
-            if self.num_classes > 0:
-                y = y.squeeze()
-            else:
-                y = y.resize(y.size(0), 1).float()
+            # if self.num_classes > 0:
+            #     y = y.squeeze()
+            # else:
+            #     y = y.resize(y.size(0), 1).float()
             emb += F.silu(self.label_emb(y))
+            # emb += F.relu(self.label_emb(y))
         x = self.proj(x) + emb #GRG
         return self.mlp(x)
 

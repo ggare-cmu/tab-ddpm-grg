@@ -1,0 +1,90 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Pipeline",
+            "type": "python",
+            "request": "launch",
+            // "program": "${file}",
+            "program": "./scripts/pipeline.py",
+            "console": "integratedTerminal",
+            "justMyCode": true, //Indicates - debug only user written codde
+            "args": [
+                // "--config", "exp/churn2/ddpm_cb_best/config.toml",
+                // "--config", "exp_causal/higgs-small/ddpm_cb_best/config.toml",
+                // "--config", "exp_causal/california/ddpm_cb_best/config.toml",
+                // "--config", "exp_causal/diabetes/ddpm_cb_best/config.toml",
+                // "--config", "exp_causal/gesture/ddpm_cb_best/config.toml",
+                // "--config", "exp_causal/house/ddpm_cb_best/config.toml",
+                // "--config", "exp_causal/miniboone/ddpm_cb_best/config.toml",
+                "--config", "exp_causal/wilt/ddpm_cb_best/config.toml",
+                // "--train", 
+                // "--sample", 
+                "--eval",
+                // "--parent_dir", "exp_causal/higgs-small/ddpm_cb_best",
+                // "--apply_transformation",
+            ]
+        },
+
+        {
+            "name": "Python: Causal Main",
+            "type": "python",
+            "request": "launch",
+            // "program": "${file}",
+            "program": "./causal_generation/causal_main.py",
+            "console": "integratedTerminal",
+            "justMyCode": true, //Indicates - debug only user written codde
+            "args": [
+                // "--config", "exp/churn2/ddpm_cb_best/config.toml",
+                "--config", "exp_causal/higgs-small/causal_ddpm_cb_best/config.toml",
+                // "--discover",
+                "--train", 
+                "--sample", 
+                "--eval",
+                // "--parent-dir", "exp_causal/higgs-small/ddpm_cb_best",
+                "--apply_transformation", //whether to transform the data or not
+            ]
+        },
+
+        {
+            "name": "Python: Causal Main Clf Exp",
+            "type": "python",
+            "request": "launch",
+            // "program": "${file}",
+            "program": "./causal_generation/causal_main_clf_exp.py",
+            "console": "integratedTerminal",
+            "justMyCode": true, //Indicates - debug only user written codde
+            "args": [
+                // "--config", "exp/churn2/ddpm_cb_best/config.toml",
+                // "--config", "exp_causal/higgs-small/causal_ddpm_cb_best/config.toml",
+                "--config", "exp_causal/higgs-small/causal_clf_ddpm_cb_best/config.toml",
+                // "--config", "exp_causal/higgs-small/causal_clf_org_ddpm_cb_best/config.toml",
+                // "--discover",
+                "--train", 
+                "--sample", 
+                "--eval",
+                // "--parent-dir", "exp_causal/higgs-small/ddpm_cb_best",
+                "--apply_transformation", //whether to transform the data or not
+            ]
+        },
+
+        {
+            "name": "Python: Tune eval model",
+            "type": "python",
+            "request": "launch",
+            // "program": "${file}",
+            "program": "./causal_generation/causal_tune_evaluation_model.py",
+            "console": "integratedTerminal",
+            "justMyCode": true, //Indicates - debug only user written codde
+            "args": [
+                "--ds_name", "higgs-small",
+                "--model", "catboost",
+                "--tune_type", "val",
+                "--device", "cuda:1",
+            ]
+        }
+    ]
+}

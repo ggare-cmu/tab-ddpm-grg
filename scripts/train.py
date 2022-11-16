@@ -3,6 +3,11 @@ import torch
 import os
 import numpy as np
 import zero
+
+#To address import errors 
+import sys
+sys.path.append("./")
+
 from tab_ddpm import GaussianMultinomialDiffusion
 from utils_train import get_model, make_dataset, update_ema
 import lib
